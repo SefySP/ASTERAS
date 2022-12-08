@@ -9,11 +9,12 @@ import org.apache.lucene.store.FSDirectory;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import gr.uop.BibFileFilter;
 
 public class Indexer implements AutoCloseable
 {
@@ -31,6 +32,7 @@ public class Indexer implements AutoCloseable
 
     public void close() throws IOException
     {
+        writer.commit();
         writer.close();
     }
 
@@ -44,10 +46,10 @@ public class Indexer implements AutoCloseable
             StringBuilder stringBuilder = new StringBuilder();
             while ((currentLine = br.readLine()) != null)
             {
-                stringBuilder.append(currentLine).append(" ");
+                stringBuilder.append(currentLine);
             }
 
-            /*
+            /* Stemmer
             EnglishStemmer stemmer = new EnglishStemmer();
             String[] words = articleData.getBody().split("[ .,]+");
             stringBuilder = new StringBuilder();
@@ -57,24 +59,6 @@ public class Indexer implements AutoCloseable
                 stemmer.stem();
                 stringBuilder.append(stemmer.getCurrent()).append(" ");
             }
-            articleData.setBody(stringBuilder.toString());
-
-
-            Field placesField = new Field(LuceneConstants.PLACES, articleData.getPlaces(), TextField.TYPE_STORED);
-            Field peopleField = new Field(LuceneConstants.PEOPLE, articleData.getPeople(), TextField.TYPE_STORED);
-            Field titleField = new Field(LuceneConstants.TITLE, articleData.getTitle(), TextField.TYPE_STORED);
-            Field bodyField = new Field(LuceneConstants.BODY, articleData.getBody(), TextField.TYPE_STORED);
-
-            Field fileNameField = new Field(LuceneConstants.FILE_NAME, file.getName(), StringField.TYPE_STORED);
-            Field filePathField = new Field(LuceneConstants.FILE_PATH, file.getCanonicalPath(),
-                    StringField.TYPE_STORED);
-
-            document.add(placesField);
-            document.add(peopleField);
-            document.add(titleField);
-            document.add(bodyField);
-            document.add(fileNameField);
-            document.add(filePathField);
             */
         }
         catch (IOException ioException)
@@ -86,34 +70,29 @@ public class Indexer implements AutoCloseable
 
     private void indexFile(File file) throws IOException
     {
-        System.out.println("Indexing " + file.getCanonicalPath());
-        Document document = getDocument(file);
-        writer.addDocument(document);
-    }
+//        System.out.println("Indexing: " + file.getCanonicalPath());
+        writer.addDocument(getDocument(file));
+     }
 
-    public int createIndex(String dataDirPath, FileFilter filter) throws
-            IOException
+    public int createIndex(String dataDirPath) throws IOException
     {
-        //get all files in the data directory
+        File[] files = new File(dataDirPath).listFiles(new BibFileFilter());
+        if (files == null)
+            return -1;
 
-        File[] files = new File(dataDirPath).listFiles();
-
-        if (files != null)
+        for (File file : files)
         {
-            for (File file : files)
+            if (checkFile(file))
             {
-                if (!file.isDirectory()
-                        && !file.isHidden()
-                        && file.exists()
-                        && file.canRead()
-                        && filter.accept(file)
-                )
-                {
-                    indexFile(file);
-                }
+                indexFile(file);
             }
         }
         return writer.numRamDocs();
+    }
 
+    private boolean checkFile(File file)
+    {
+        return !file.isHidden()
+                && file.canRead();
     }
 }

@@ -1,4 +1,4 @@
-package gr.uop.lucene;
+package gr.uop;
 
 public enum BibFileFields
 {

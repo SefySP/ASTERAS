@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import gr.uop.BibFileFilter;
+import gr.uop.BibFileFields;
 
 public class LuceneController
 {
@@ -76,7 +76,7 @@ public class LuceneController
         {
             int numIndexed;
             long startTime = System.currentTimeMillis();
-            numIndexed = indexer.createIndex(DATA_DIR, new BibFileFilter());
+            numIndexed = indexer.createIndex(DATA_DIR);
             long endTime = System.currentTimeMillis();
             System.out.println(numIndexed + " File(s) indexed, time taken: " + (endTime - startTime) + " ms");
         }

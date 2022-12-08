@@ -25,7 +25,7 @@ public class ASTERAS extends Application
 
         Scene scene = new Scene(root);
         primary = stage;
-        initializeStage(scene, "ASTERAS");
+        initializeStage(scene);
     }
 
     public static void main(String[] args)
@@ -41,12 +41,15 @@ public class ASTERAS extends Application
         primary.getIcons().add(icon);
     }
 
-    private void initializeStage(Scene scene, String title) throws IOException
+    private void initializeStage(Scene scene) throws IOException
     {
-        primary.setTitle(title);
+        primary.setTitle("ASTERAS");
         primary.setScene(scene);
         setIcon();
 
         primary.show();
+
+        primary.setMinHeight(MIN_HEIGHT);
+        primary.setMinWidth(MIN_WIDTH);
     }
 }

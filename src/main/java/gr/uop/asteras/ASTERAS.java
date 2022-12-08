@@ -20,9 +20,6 @@ public class ASTERAS extends Application
     @Override
     public void start(Stage stage) throws IOException
     {
-        File iconFile = new File("src/main/resources/gr/uop/asteras/icons/search32.png");
-        Image icon = new Image(iconFile.toURI().toURL().toString());
-
         FXMLLoader fxmlLoader = new FXMLLoader(ASTERAS.class.getResource("ASTERAS.fxml"));
         Parent root = fxmlLoader.load();
 

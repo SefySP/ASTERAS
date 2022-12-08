@@ -13,12 +13,12 @@ public class MainController
     @FXML
     void lucky(ActionEvent event)
     {
-
+        System.out.println(searchTextField.getText().replace('a', '2').trim());
     }
 
     @FXML
     void search(ActionEvent event)
     {
-
+        System.out.println(searchTextField.getText().trim());
     }
 }

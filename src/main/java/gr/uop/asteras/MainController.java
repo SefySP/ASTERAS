@@ -1,16 +1,24 @@
 package gr.uop.asteras;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 
 public class MainController
 {
     @FXML
-    private Label welcomeText;
+    public TextField searchTextField;
 
     @FXML
-    protected void onHelloButtonClick()
+    void lucky(ActionEvent event)
     {
-        welcomeText.setText("Welcome to JavaFX Application!");
+
+    }
+
+    @FXML
+    void search(ActionEvent event)
+    {
+
     }
 }

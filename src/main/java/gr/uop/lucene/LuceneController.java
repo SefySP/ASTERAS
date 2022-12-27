@@ -107,7 +107,7 @@ public class LuceneController
         for (ScoreDoc scoreDoc: hits.scoreDocs)
         {
             Document doc = searcher.getDocument(scoreDoc);
-            topDocsFileList.add(new File(doc.get(BibFileFields.FILE_PATH.toString())));
+            topDocsFileList.add(new File(doc.get(BibFileFields.FILE_PATH)));
         }
         searcher.close();
         return topDocsFileList;

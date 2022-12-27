@@ -2,19 +2,14 @@ package gr.uop.asteras;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Optional;
-
-
-public class AddingBib {
+public class AddingBib{
     public AddingBib(File file) {
         System.out.println("AddingBib");
         String filename = file.getName();
         Optional<Object> extension;
-
-        
 
         try {
             BufferedReader fget = new BufferedReader(new FileReader(file));

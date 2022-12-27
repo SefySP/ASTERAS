@@ -1,110 +1,100 @@
 package gr.uop.asteras;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Optional;
-public class AddingBib{
-    public AddingBib(File file) {
-        System.out.println("AddingBib");
-        String filename = file.getName();
-        Optional<Object> extension;
+import java.io.*;
+public class AddingBib
+{
 
-        try {
-            BufferedReader fget = new BufferedReader(new FileReader(file));
-            extension = Optional.ofNullable(filename).filter(f -> f.contains(".")).map(f -> f.substring(filename.lastIndexOf(".") + 1)); // βρίσκει αν είναι .bib
-            System.out.println(extension);
-            if (extension.toString().equals("Optional[bib]")) {
-                String fname,title = "",otherThing,type = "";
-                int fn;
-                fname = filename.substring(0, filename.lastIndexOf('.'));
+    private final File file;
+    private String annotation;
+    private String title;
+    private String journal;
+    private String booktitle;
 
-                System.out.println(fname);
-                System.out.println("bib YES");
+    public AddingBib(File file) throws IOException
+    {
+        this.file = file;
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(this.file));
+        int inputCharacter;
 
-                
-                fn = fget.read();
-                while (fn != -1) { // Δεν ελέγχει το αρχείο για όλων των ειδών τα λάθη
-                    
-                    title = "";
-                    otherThing = "";
-                    if (fn == (int) '@'){//Βρέθηκε έγγραφο
-                        System.out.println("\n\n\n-----New Document-----");
-                        fn = fget.read();
-                        if (fn == (int) 'a'){
-                            type = "article";
-                            System.out.println("------Article---------");
-                        }
-                        else{
-                            type = "inproceedings";
-                            System.out.println("------Inproceedings---");
-                        }
-                            
-                        title = findDataFromWord("title", fget);
-                        
-                        System.out.println("The title is: " + title + "\n");   
+        inputCharacter = bufferedReader.read();
+        while (inputCharacter != -1)
+        {
+            if (inputCharacter == (int) '@')
+            {
+                inputCharacter = bufferedReader.read();
+                setAnnotationTypeFromBib(inputCharacter);
 
-                        if (type.equals("article")){
-                            otherThing = findDataFromWord("journal", fget);
-                            System.out.println("The journal is: " + otherThing + "\n");
-                        }
-                        else {
-                            otherThing = findDataFromWord("booktitle", fget);
-                            System.out.println("The booktitle is: " + otherThing + "\n");
-                        }
+                title = findDataFromWord("title", bufferedReader);
 
-
-                    }
-                    fn = fget.read();
-                }//Διάβασμα του αρχείου
-                
-                
-                
-            } else {
-                System.out.println("not bib");
+                setJournalAndBooktitleFromBib(bufferedReader);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            inputCharacter = bufferedReader.read();
         }
     }
 
-    static String findDataFromWord(String word, BufferedReader fget) throws Exception{
-        String data ="";
-        searchFileUntilWord(word, fget);
-        data = getBibFieldData(fget);
+    private void setJournalAndBooktitleFromBib(BufferedReader bufferedReader) throws IOException
+    {
+        if (annotation.equals("article")) {
+            journal   = findDataFromWord("journal", bufferedReader);
+            booktitle = "";
+        }
+        else
+        {
+            journal   = "";
+            booktitle = findDataFromWord("booktitle", bufferedReader);
+        }
+    }
+
+    private void setAnnotationTypeFromBib(int inputCharacter)
+    {
+        if (inputCharacter == 'a')
+        {
+            annotation = "article";
+            return;
+        }
+        annotation = "in proceedings";
+    }
+
+
+    public static String findDataFromWord(String word, BufferedReader bufferedReader) throws IOException
+    {
+        String data;
+        searchFileUntilWord(word, bufferedReader);
+        data = getBibFieldData(bufferedReader);
         return data;
     }
 
-    static void searchFileUntilWord(String word, BufferedReader fget) throws Exception {
+    public static void searchFileUntilWord(String word, BufferedReader bufferedReader) throws IOException
+    {
         String searchfn = "";
         int fn, wordlength = word.length();
         while (!searchfn.equals(word)) {
             searchfn = "";
-            fn = fget.read();
+            fn = bufferedReader.read();
             while (fn != (int) word.charAt(0)) {
-                fn = fget.read();
+                fn = bufferedReader.read();
                 if (fn == -1){
-                    throw new Exception("Word not found");
+                    throw new IOException("Word not found");
                 }
             }
             searchfn += word.charAt(0);
             for (int i = 0; i < wordlength-1 ; i++) {
-                searchfn += (char) fget.read();
+                searchfn += (char) bufferedReader.read();
             }
         }
     }
 
-    static String getBibFieldData(BufferedReader fget) throws IOException{
+    public static String getBibFieldData(BufferedReader bufferedReader) throws IOException
+    {
         String data = "";
         int fn,fncount,previousChar;
-        fn = fget.read();
+        fn = bufferedReader.read();
         while (fn != (int) '{'){
-            fn = fget.read();
+            fn = bufferedReader.read();
         }
         fncount = 1;
         previousChar = fn;
-        fn = fget.read();
+        fn = bufferedReader.read();
         while (fncount != 0){
             if (fn == (int) '{'){
                 fncount++;
@@ -118,50 +108,9 @@ public class AddingBib{
                     }
                 }
                 previousChar = fn;
-                fn = fget.read();
+                fn = bufferedReader.read();
             }
         }
         return data;
     }
 }
-
-
-
-
-// while (!searchfn.equals("title")){
-//     while (fget.read() != (int) 't'){
-        
-//     };
-//     searchfn = "t";
-//     for (int i = 0; i < 4; i++) {
-//         searchfn += (char) fget.read();
-//     }
-// }
-
-
-
-
-// fn = fget.read();
-// while (fn != (int) '{'){
-//     fn = fget.read();
-// }
-// fncount = 1;
-// title = "";
-// previousChar = fn;
-// fn = fget.read();
-// while (fncount != 0){
-//     if (fn == (int) '{'){
-//         fncount++;
-//     } else if (fn == (int) '}'){
-//         fncount--;
-//     }
-//     if (fncount != 0){
-//         if (fn != '\n'){
-//             if(!(previousChar == (int)' ' && fn == (int)' ')){
-//                 title += (char) fn;
-//             }
-//         }
-//         previousChar = fn;
-//         fn = fget.read();
-//     }
-// }

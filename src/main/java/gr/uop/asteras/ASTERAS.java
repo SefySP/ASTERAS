@@ -26,6 +26,9 @@ public class ASTERAS extends Application
         Scene scene = new Scene(root);
         primary = stage;
         initializeStage(scene);
+
+        AddingBib addingBib = new AddingBib(new File("src/main/resources/gr/uop/asteras/temp/bibfiles/platis.bib"));
+        System.out.println(addingBib.getBibFieldData("publisher"));
     }
 
     public static void main(String[] args)

@@ -1,5 +1,6 @@
 package gr.uop.asteras;
 
+import gr.uop.BibFileFields;
 import gr.uop.lucene.LuceneController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,13 +11,14 @@ import java.io.IOException;
 
 public class MainController
 {
+    private String[] searchableFields = new String[]{BibFileFields.AUTHOR, BibFileFields.BOOKTITLE, BibFileFields.TITLE};
     @FXML
     public TextField searchTextField;
 
     @FXML
     void lucky(ActionEvent event)
     {
-        System.out.println(searchTextField.getText().replace('a', '2').trim());
+        System.out.println(searchTextField.getText().trim());
     }
 
     @FXML
@@ -25,9 +27,11 @@ public class MainController
         String searchQuery = searchTextField.getText().trim();
         System.out.println(searchQuery);
         LuceneController controller = new LuceneController();
-        try {
-            controller.search(searchTextField.getText().trim(), new String[]{"title"});
-        } catch (IOException | ParseException e)
+        try
+        {
+            controller.search(searchTextField.getText().trim(), searchableFields);
+        }
+        catch (IOException | ParseException e)
         {
             throw new RuntimeException(e);
         }

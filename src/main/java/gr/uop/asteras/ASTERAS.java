@@ -1,5 +1,6 @@
 package gr.uop.asteras;
 
+import gr.uop.lucene.LuceneController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -26,9 +27,8 @@ public class ASTERAS extends Application
         Scene scene = new Scene(root);
         primary = stage;
         initializeStage(scene);
-
-        AddingBib addingBib = new AddingBib(new File("src/main/resources/gr/uop/asteras/temp/bibfiles/platis.bib"));
-        System.out.println(addingBib.getBibFieldData("publisher"));
+        LuceneController controller = new LuceneController();
+        controller.createIndex();
     }
 
     public static void main(String[] args)

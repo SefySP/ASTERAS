@@ -7,9 +7,6 @@ import org.apache.lucene.search.TopDocs;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,58 +14,10 @@ import gr.uop.BibFileFields;
 
 public class LuceneController
 {
-    public static final String INDEX_DIR = "";
-    public static final String DATA_DIR = "";
+    public static final String INDEX_DIR = "src/main/resources/gr/uop/asteras/index";
+    public static final String DATA_DIR = "src/main/resources/gr/uop/asteras/data";
 
     private long time;
-
-    public void createIndexDir()
-    {
-        Path indexPath = Paths.get(LuceneController.INDEX_DIR);
-        try
-        {
-            Files.createDirectory(indexPath);
-        }
-        catch(IOException e)
-        {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public boolean indexDirExists()
-    {
-        Path indexPath = Paths.get(LuceneController.INDEX_DIR);
-        return Files.exists(indexPath);
-    }
-
-    public boolean isIndexDirEmpty()
-    {
-        File index = new File(INDEX_DIR);
-        String[] entries = index.list();
-        if(entries != null)
-        {
-            return entries.length == 0;
-        }
-        return false;
-    }
-
-    public void deleteIndexDir()
-    {
-        String[] entries = new File(INDEX_DIR).list();
-        assert entries != null;
-        for (String file : entries)
-        {
-            File currentFile = new File(new File(INDEX_DIR), file);
-            try
-            {
-                Files.delete(currentFile.toPath());
-            }
-            catch(IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-    }
 
     public void createIndex()
     {

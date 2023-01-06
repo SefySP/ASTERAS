@@ -5,15 +5,31 @@ import java.util.Scanner;
 
 public class AddingBib
 {
-
-    private final File file;
-
-    public AddingBib(File file)
+    public static String getBibAnnotationData(File file)
     {
-        this.file = file;
+        StringBuilder data = new StringBuilder();
+        try
+        {
+            Scanner input = new Scanner(file);
+            String annotetiondata;
+            while (input.hasNextLine())
+            {
+                annotetiondata = input.nextLine().trim();
+                if (annotetiondata.contains("@"))
+                {
+                    var elements = annotetiondata.split("\\{");
+                    data.append(elements[1]).append("\n");
+                }
+            }
+        }
+        catch (FileNotFoundException exception)
+        {
+            System.out.println(exception.getMessage());
+        }
+        return data.toString();
     }
 
-    public String getBibFieldData(String field)
+    public static String getBibFieldData(String field, File file)
     {
         StringBuilder data = new StringBuilder();
         try

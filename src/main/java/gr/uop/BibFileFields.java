@@ -6,6 +6,7 @@ public class BibFileFields
     public static String AUTHOR = "author";
     public static String TITLE = "title";
     public static String BOOKTITLE = "booktitle";
+    public static String EDITOR = "editor";
     public static String PAGES = "pages";
     public static String PUBLISHER = "publisher";
     public static String YEAR = "year";

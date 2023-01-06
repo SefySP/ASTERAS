@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 public class AddingBib
 {
+    private static final String regex = "[^\\w\\s]";
     public static String getBibAnnotationData(File file)
     {
         StringBuilder data = new StringBuilder();
@@ -18,7 +19,8 @@ public class AddingBib
                 if (annotetiondata.contains("@"))
                 {
                     var elements = annotetiondata.split("\\{");
-                    data.append(elements[1]).append("\n");
+                    if (isEquals("@inproceedings", elements[0]) || isEquals("@article", elements[0]))
+                        data.append(elements[1]).append("\n");
                 }
             }
         }
@@ -26,7 +28,7 @@ public class AddingBib
         {
             System.out.println(exception.getMessage());
         }
-        return data.toString();
+        return data.toString().replaceAll(regex, "").trim().toLowerCase();
     }
 
     public static String getBibFieldData(String field, File file)
@@ -44,7 +46,7 @@ public class AddingBib
                 if (isContains(fieldData, field))
                 {
                     var elements = fieldData.split("=");
-                    if (!isEquals(field, elements))
+                    if (!isEquals(field, elements[0]))
                         continue;
                     if (isContains(elements[1].trim(), "},"))
                     {
@@ -66,7 +68,7 @@ public class AddingBib
         {
             System.out.println(exception.getMessage());
         }
-        return data.toString().trim();
+        return data.toString().replaceAll(regex, "").trim().toLowerCase();
     }
 
     private static boolean isContains(String elements, String s)
@@ -74,8 +76,8 @@ public class AddingBib
         return elements.contains(s);
     }
 
-    private static boolean isEquals(String field, String[] elements)
+    private static boolean isEquals(String field, String elements)
     {
-        return elements[0].trim().equals(field);
+        return elements.trim().equals(field);
     }
 }

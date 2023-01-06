@@ -29,7 +29,6 @@ public class Indexer implements AutoCloseable
         Path indexPath = Paths.get(indexDirectoryPath);
 
         Directory indexDirectory = FSDirectory.open(indexPath);
-
         IndexWriterConfig config = new IndexWriterConfig(new EnglishAnalyzer(EnglishAnalyzer.ENGLISH_STOP_WORDS_SET));
         writer = new IndexWriter(indexDirectory, config);
     }
@@ -47,6 +46,7 @@ public class Indexer implements AutoCloseable
                 TextField.TYPE_STORED);
         Field author = getField(BibFileFields.AUTHOR, file);
         Field title = getField(BibFileFields.TITLE, file);
+        Field editor = getField(BibFileFields.EDITOR, file);
         Field booktitle = getField(BibFileFields.BOOKTITLE, file);
         Field publisher = getField(BibFileFields.PUBLISHER, file);
         Field year = getField(BibFileFields.YEAR, file);
@@ -56,23 +56,14 @@ public class Indexer implements AutoCloseable
 
         document.add(annotation);
         document.add(author);
+        document.add(editor);
         document.add(title);
         document.add(booktitle);
         document.add(publisher);
         document.add(year);
         document.add(fileNameField);
         document.add(filePathField);
-        /* Stemmer
-        EnglishStemmer stemmer = new EnglishStemmer();
-        String[] words = articleData.getBody().split("[ .{},]+");
-        stringBuilder = new StringBuilder();
-        for (String word : words)
-        {
-            stemmer.setCurrent(word);
-            stemmer.stem();
-            stringBuilder.append(stemmer.getCurrent()).append(" ");
-        }
-        */
+
         return document;
     }
 

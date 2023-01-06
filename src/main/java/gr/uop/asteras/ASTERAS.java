@@ -1,6 +1,5 @@
 package gr.uop.asteras;
 
-import gr.uop.lucene.LuceneController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -27,8 +26,6 @@ public class ASTERAS extends Application
         Scene scene = new Scene(root);
         primary = stage;
         initializeStage(scene);
-        LuceneController controller = new LuceneController();
-        controller.createIndex();
     }
 
     public static void main(String[] args)

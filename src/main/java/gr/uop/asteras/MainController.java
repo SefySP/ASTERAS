@@ -4,13 +4,19 @@ import gr.uop.BibFileFields;
 import gr.uop.lucene.LuceneController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import org.apache.lucene.queryparser.classic.ParseException;
 
@@ -70,6 +76,8 @@ public class MainController
 	void search(ActionEvent event)
 	{
 		String searchQuery = searchTextField.getText().trim();
+		if (searchQuery.isEmpty())
+			return;
 		System.out.println(searchQuery);
 		List<String> searchFields = new ArrayList<>();
 		int i = 0;
@@ -96,6 +104,9 @@ public class MainController
 			var list = luceneController.search(searchTextField.getText().trim(), searchFields.toArray(new String[0]));
 			System.out.println(list);
 			System.out.println(luceneController.getTime());
+
+			showResults(list);
+
 		}
 		catch (IOException | ParseException e)
 		{
@@ -103,6 +114,29 @@ public class MainController
 		}
 	}
 
+	private void showResults(List<File> resultList) throws IOException
+	{
+		ShowResultsController showResultsController = new ShowResultsController();
+		File file = new File("src/main/resources/gr/uop/asteras/ShowResults.fxml");
+		FXMLLoader loader = new FXMLLoader(file.toURI().toURL());
+		loader.setController(showResultsController);
+		Parent root = loader.load();
+		Scene scene = new Scene(root);
+		Stage stage = new Stage();
+
+		showResultsController.setResultList(resultList);
+		showResultsController.setHyperLinkListViewResult();
+		stage.setTitle("Results");
+		stage.initModality(Modality.APPLICATION_MODAL);
+		stage.initOwner(root.getScene().getWindow());
+		stage.setMinHeight(400.0);
+		stage.setMinWidth(400.0);
+
+		setIcon(stage);
+		stage.setScene(scene);
+
+		stage.showAndWait();
+	}
 	@FXML
 	void enterPressed(KeyEvent event)
 	{
@@ -160,4 +194,12 @@ public class MainController
             throw new RuntimeException(e);
         }
     }
+
+	private void setIcon(Stage stage) throws IOException
+	{
+		File iconFile = new File("src/main/resources/gr/uop/asteras/icons/search32.png");
+		Image icon = new Image(iconFile.toURI().toURL().toString());
+
+		stage.getIcons().add(icon);
+	}
 }

@@ -15,7 +15,7 @@ public class AddingFiles {
         System.out.println("Hello World here0");
     }
 
-    public void run(String PathToFile) throws IOException{
+    public void addZip(String PathToFile) throws IOException{
         System.out.println("Hello World here1");
         ZipFile zipFile = new ZipFile(PathToFile);
 
@@ -34,7 +34,7 @@ public class AddingFiles {
                 out.write(in.readAllBytes());
 
                 System.out.println("\n\n");
-                System.out.println(AddingBib.getBibFieldData("title", fnfile));
+                System.out.println(AddingBib.getBibFieldData("title", fnfile)); // Εδώ Lucene
                 System.out.println("\n\n");
             }
             

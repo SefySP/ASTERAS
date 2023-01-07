@@ -19,21 +19,38 @@ public class LuceneController
 
     private long time;
 
+    private final Indexer indexer;
+
+    public LuceneController()
+    {
+        try
+        {
+            this.indexer = new Indexer(INDEX_DIR);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void addFileToIndex(File file)
+    {
+        long startTime = System.currentTimeMillis();
+        indexer.indexFile(file);
+        long endTime = System.currentTimeMillis();
+        System.out.println(file.getName() + " File indexed, time taken: " + (endTime - startTime) + " ms");
+        indexer.merge();
+        indexer.commit();
+    }
+
     public void createIndex()
     {
-        try (Indexer indexer = new Indexer(INDEX_DIR))
-        {
-            int numIndexed;
-            long startTime = System.currentTimeMillis();
-            numIndexed = indexer.createIndex(DATA_DIR);
-            long endTime = System.currentTimeMillis();
-            System.out.println(numIndexed + " File(s) indexed, time taken: " + (endTime - startTime) + " ms");
-        }
-        catch (IOException ioException)
-        {
-            ioException.printStackTrace();
-        }
-
+        int numIndexed;
+        long startTime = System.currentTimeMillis();
+        numIndexed = indexer.createIndex(DATA_DIR);
+        long endTime = System.currentTimeMillis();
+        System.out.println(numIndexed + " File(s) indexed, time taken: " + (endTime - startTime) + " ms");
+        indexer.commit();
     }
 
     public List<File> search(String searchQuery, String[] fields) throws IOException, ParseException

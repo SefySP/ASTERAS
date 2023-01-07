@@ -72,7 +72,7 @@ public class Indexer implements AutoCloseable
         return new Field(bibFileField, AddingBib.getBibFieldData(bibFileField, file), TextField.TYPE_STORED);
     }
 
-    private void indexFile(File file)
+    public void indexFile(File file)
     {
         System.out.println("Indexing: " + file.getAbsolutePath());
         try
@@ -85,7 +85,31 @@ public class Indexer implements AutoCloseable
         }
     }
 
-    public int createIndex(String dataDirPath) throws IOException
+    public void merge()
+    {
+        try
+        {
+            writer.forceMerge(1);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void commit()
+    {
+        try
+        {
+            writer.commit();
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int createIndex(String dataDirPath)
     {
         File[] files = new File(dataDirPath).listFiles(new BibFileFilter());
         if (files == null)

@@ -26,16 +26,14 @@ public class AddingFiles {
             String name = entry.getName();
             System.out.println(name);
             if (name.toUpperCase().endsWith(".BIB")) {
-                File dir = createDirectory("temp");
+                File dir = createDirectory("src/main/resources/gr/uop/asteras/temp/");
                 File fnfile = new File(dir, "fn.bib");//Αρχείο
-                // fnfile.getParentFile().mkdirs();
-                // fnfile.createNewFile();
-                System.out.println("\n\n");
-                System.out.println(fnfile.getAbsolutePath());
-                System.out.println("\n\n");
+
                 OutputStream out = new FileOutputStream(fnfile);
                 InputStream in = zipFile.getInputStream(entry); //Ινπουτ
                 out.write(in.readAllBytes());
+
+                System.out.println("\n\n");
                 System.out.println(AddingBib.getBibFieldData("title", fnfile));
                 System.out.println("\n\n");
             }

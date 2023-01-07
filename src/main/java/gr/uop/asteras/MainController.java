@@ -16,6 +16,10 @@ import org.apache.lucene.queryparser.classic.ParseException;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -117,13 +121,43 @@ public class MainController
 
 		var selectedFile = fileChooser.showOpenMultipleDialog(advancedSettingsBox.getScene().getWindow());
 
-		if (selectedFile != null)
-		{
-			for (File file : selectedFile)
+        assert selectedFile != null;
+
+        for (File file: selectedFile)
+        {
+			try
 			{
+				copyFileToDefaultDataDirectory(file);
 				luceneController.addFileToIndex(file);
 				System.out.println(file.getName());
 			}
-		}
+			catch (FileAlreadyExistsException exception)
+			{
+				System.out.println(file + " exists");
+			}
+        }
 	}
+
+    private void copyFileToDefaultDataDirectory(File file) throws FileAlreadyExistsException
+	{
+        Path sourcePath = Paths.get(file.toURI());
+        Path targetPath = Paths.get(new File(LuceneController.DATA_DIR + File.separator + file.getName()).toURI());
+
+        System.out.println("File: " + file.getName());
+        System.out.println("Source: " + sourcePath.getFileName());
+        System.out.println("Target: " + targetPath.getFileName());
+
+        try
+        {
+            Files.copy(sourcePath, targetPath);
+        }
+		catch (FileAlreadyExistsException exception)
+		{
+			throw new FileAlreadyExistsException(file.getName());
+		}
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
 }

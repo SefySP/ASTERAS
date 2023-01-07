@@ -127,8 +127,7 @@ public class MainController
         {
 			try
 			{
-				copyFileToDefaultDataDirectory(file);
-				luceneController.addFileToIndex(file);
+				luceneController.addFileToIndex(copyFileToDefaultDataDirectory(file));
 				System.out.println(file.getName());
 			}
 			catch (FileAlreadyExistsException exception)
@@ -138,7 +137,7 @@ public class MainController
         }
 	}
 
-    private void copyFileToDefaultDataDirectory(File file) throws FileAlreadyExistsException
+    private File copyFileToDefaultDataDirectory(File file) throws FileAlreadyExistsException
 	{
         Path sourcePath = Paths.get(file.toURI());
         Path targetPath = Paths.get(new File(LuceneController.DATA_DIR + File.separator + file.getName()).toURI());
@@ -150,6 +149,7 @@ public class MainController
         try
         {
             Files.copy(sourcePath, targetPath);
+			return  targetPath.toFile();
         }
 		catch (FileAlreadyExistsException exception)
 		{

@@ -1,7 +1,7 @@
 package gr.uop.asteras;
 
 import javafx.geometry.Pos;
-import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 
@@ -10,10 +10,10 @@ import javafx.scene.layout.HBox;
  *     Centered List View
  * </a>
  */
-public final class CenteredListViewCell extends ListCell<Hyperlink>
+public final class CenteredListViewCell extends ListCell<Label>
 {
 	@Override
-	protected void updateItem(Hyperlink item, boolean empty) {
+	protected void updateItem(Label item, boolean empty) {
 		super.updateItem(item, empty);
 		if (empty) {
 			setGraphic(null);

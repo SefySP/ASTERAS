@@ -35,7 +35,9 @@ public class MainController
 
 	private final LuceneController luceneController;
 	private final String[] searchableFields = new String[]{BibFileFields.AUTHOR, BibFileFields.EDITOR,
-														   BibFileFields.BOOKTITLE, BibFileFields.TITLE};
+														   BibFileFields.BOOKTITLE, BibFileFields.TITLE,
+														   BibFileFields.ANNOTATION
+			, BibFileFields.PUBLISHER, BibFileFields.YEAR};
 	@FXML
 	private TextField searchTextField;
 
@@ -77,40 +79,47 @@ public class MainController
 	{
 		String searchQuery = searchTextField.getText().trim();
 		if (searchQuery.isEmpty())
-			return;
-		System.out.println(searchQuery);
-		List<String> searchFields = new ArrayList<>();
-		int i = 0;
-
-		for (Node check :
-				advancedSettingsBox.getChildren())
 		{
-			CheckBox checkBox = (CheckBox) check;
-			if (checkBox.isSelected())
-			{
-				System.out.println(checkBox.getText());
-				searchFields.add(checkBox.getText());
-				i++;
-			}
+			return;
 		}
 
-        if (i == 0)
-        {
-            searchFields.addAll(Arrays.stream(searchableFields).toList());
-        }
+		List<String> searchFields = new ArrayList<>();
+
+		addCheckFields(searchFields);
+
+		isFieldEmpty(searchFields);
 
 		try
 		{
 			var list = luceneController.search(searchTextField.getText().trim(), searchFields.toArray(new String[0]));
 			System.out.println(list);
 			System.out.println(luceneController.getTime());
-
 			showResults(list);
-
 		}
 		catch (IOException | ParseException e)
 		{
 			throw new RuntimeException(e);
+		}
+	}
+
+	private void addCheckFields(List<String> searchFields)
+	{
+		for (Node check : advancedSettingsBox.getChildren())
+		{
+			CheckBox checkBox = (CheckBox) check;
+			if (checkBox.isSelected())
+			{
+				System.out.println(checkBox.getText());
+				searchFields.add(checkBox.getText());
+			}
+		}
+	}
+
+	private void isFieldEmpty(List<String> searchFields)
+	{
+		if (searchFields.isEmpty())
+		{
+			searchFields.addAll(Arrays.stream(searchableFields).toList());
 		}
 	}
 
@@ -125,7 +134,8 @@ public class MainController
 		Stage stage = new Stage();
 
 		showResultsController.setResultList(resultList);
-		showResultsController.setHyperLinkListViewResult();
+		showResultsController.setResultScores(luceneController.getTopScores());
+		showResultsController.setListViewResult();
 		stage.setTitle("Results");
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.initOwner(root.getScene().getWindow());
@@ -137,6 +147,7 @@ public class MainController
 
 		stage.showAndWait();
 	}
+
 	@FXML
 	void enterPressed(KeyEvent event)
 	{
@@ -155,10 +166,10 @@ public class MainController
 
 		var selectedFile = fileChooser.showOpenMultipleDialog(advancedSettingsBox.getScene().getWindow());
 
-        assert selectedFile != null;
+		assert selectedFile != null;
 
-        for (File file: selectedFile)
-        {
+		for (File file : selectedFile)
+		{
 			try
 			{
 				luceneController.addFileToIndex(copyFileToDefaultDataDirectory(file));
@@ -168,32 +179,32 @@ public class MainController
 			{
 				System.out.println(file + " exists");
 			}
-        }
+		}
 	}
 
-    private File copyFileToDefaultDataDirectory(File file) throws FileAlreadyExistsException
+	private File copyFileToDefaultDataDirectory(File file) throws FileAlreadyExistsException
 	{
-        Path sourcePath = Paths.get(file.toURI());
-        Path targetPath = Paths.get(new File(LuceneController.DATA_DIR + File.separator + file.getName()).toURI());
+		Path sourcePath = Paths.get(file.toURI());
+		Path targetPath = Paths.get(new File(LuceneController.DATA_DIR + File.separator + file.getName()).toURI());
 
-        System.out.println("File: " + file.getName());
-        System.out.println("Source: " + sourcePath.getFileName());
-        System.out.println("Target: " + targetPath.getFileName());
+		System.out.println("File: " + file.getName());
+		System.out.println("Source: " + sourcePath.getFileName());
+		System.out.println("Target: " + targetPath.getFileName());
 
-        try
-        {
-            Files.copy(sourcePath, targetPath);
-			return  targetPath.toFile();
-        }
+		try
+		{
+			Files.copy(sourcePath, targetPath);
+			return targetPath.toFile();
+		}
 		catch (FileAlreadyExistsException exception)
 		{
 			throw new FileAlreadyExistsException(file.getName());
 		}
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
+		catch (IOException e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
 
 	private void setIcon(Stage stage) throws IOException
 	{

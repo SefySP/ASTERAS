@@ -20,6 +20,7 @@ public class LuceneController
     private long time;
 
     private final Indexer indexer;
+    private List<Float> topScores = new ArrayList<>() ;
 
     public LuceneController()
     {
@@ -56,11 +57,10 @@ public class LuceneController
     public List<File> search(String searchQuery, String[] fields) throws IOException, ParseException
     {
         Searcher searcher = new Searcher(INDEX_DIR, fields);
-
+        topScores.clear();
         long startTime = System.currentTimeMillis();
         TopDocs hits = searcher.search(searchQuery);
         long endTime = System.currentTimeMillis();
-
 
         setTime(endTime - startTime);
 
@@ -73,6 +73,7 @@ public class LuceneController
         for (ScoreDoc scoreDoc: hits.scoreDocs)
         {
             Document doc = searcher.getDocument(scoreDoc);
+            topScores.add(scoreDoc.score);
             topDocsFileList.add(new File(doc.get(BibFileFields.FILE_PATH)));
         }
         searcher.close();
@@ -87,5 +88,10 @@ public class LuceneController
     public void setTime(long time)
     {
         this.time = time;
+    }
+
+    public List<Float> getTopScores()
+    {
+        return topScores;
     }
 }

@@ -7,31 +7,32 @@ import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 
 public class ShowResultsController implements Initializable
 {
 	@FXML
-	private ListView<Hyperlink> listViewResult;
+	public ListView<Label> listViewResult;
 
 	private List<File> resultList;
+	private List<Float> resultScores;
 
 	public void setResultList(List<File> resultList)
 	{
 		this.resultList = resultList;
 	}
 
-	public void setHyperLinkListViewResult()
+	public void setListViewResult()
 	{
 		listViewResult.getItems().clear();
+		int i = 0;
 		for (File file: resultList)
 		{
-			Hyperlink link = new Hyperlink(file.getName());
-			link.setOnAction(event ->
-			{
-			});
+			String researcher = file.getName().split("\\.")[0].toUpperCase();
+			Label link = new Label(researcher + " | " + resultScores.get(i));
+			i++;
 			listViewResult.getItems().add(link);
 		}
 	}
@@ -41,5 +42,10 @@ public class ShowResultsController implements Initializable
 	{
 		listViewResult.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		listViewResult.setCellFactory(hyperlinkListView -> new CenteredListViewCell());
+	}
+
+	public void setResultScores(List<Float> resultScores)
+	{
+		this.resultScores = resultScores;
 	}
 }

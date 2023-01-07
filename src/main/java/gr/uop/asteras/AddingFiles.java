@@ -9,12 +9,8 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class AddingFiles {
-    
-    public static void AddingFiles() throws IOException {
-        System.out.println("Hello World here0");
-    }
-
+public class AddingFiles
+{
     public void addZip(String PathToFile) throws IOException{
         System.out.println("Hello World here1");
         ZipFile zipFile = new ZipFile(PathToFile);

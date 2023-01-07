@@ -30,6 +30,12 @@ public class ASTERAS extends Application
 
     public static void main(String[] args)
     {
+        AddingFiles addingFiles = new AddingFiles();
+        try {
+            addingFiles.run("E:/All/university/7o/Anaktisi/proj 1/data.zip");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         launch();
     }
 

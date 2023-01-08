@@ -17,9 +17,10 @@
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
-          <Menu mnemonicParsing="false" onAction="#addBibFile" text="File">
+          <Menu mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem mnemonicParsing="false" text="Add Bib File" />
+                  <MenuItem mnemonicParsing="false" onAction="#addBibFile" text="Add Bib File" />
+                  <MenuItem mnemonicParsing="false" onAction="#deleteBibFile" text="Delete Bib FIle" />
                   <SeparatorMenuItem mnemonicParsing="false" />
               <MenuItem mnemonicParsing="false" text="Close" />
             </items>

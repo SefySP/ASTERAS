@@ -7,6 +7,8 @@ import org.apache.lucene.search.TopDocs;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,21 @@ public class LuceneController
         catch (IOException e)
         {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteIndexDir() throws IOException
+    {
+        indexer.close();
+        var files = new File(INDEX_DIR).listFiles();
+
+        if (files == null)
+            return;
+
+        for (int i = 0; i < files.length; i++)
+        {
+            Path targetPath = files[i].toPath();
+            Files.delete(targetPath);
         }
     }
 

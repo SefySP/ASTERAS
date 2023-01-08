@@ -1,5 +1,17 @@
 package gr.uop.asteras;
 
+import org.apache.lucene.queryparser.classic.ParseException;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import gr.uop.BibFileFields;
 import gr.uop.lucene.LuceneController;
 import javafx.event.ActionEvent;
@@ -18,28 +30,17 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import org.apache.lucene.queryparser.classic.ParseException;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class MainController
 {
 
-	private final LuceneController luceneController;
-	private final String[] searchableFields = new String[]{BibFileFields.AUTHOR, BibFileFields.EDITOR,
-														   BibFileFields.BOOKTITLE, BibFileFields.TITLE,
-														   BibFileFields.ANNOTATION
+	protected static final String[]         searchableFields = new String[]{BibFileFields.AUTHOR, BibFileFields.EDITOR,
+																			BibFileFields.BOOKTITLE,
+																			BibFileFields.TITLE,
+																			BibFileFields.ANNOTATION
 			, BibFileFields.PUBLISHER, BibFileFields.YEAR};
+	private          LuceneController luceneController;
 	@FXML
-	private TextField searchTextField;
+	private                TextField        searchTextField;
 
 	@FXML
 	private HBox advancedSettingsBox;
@@ -126,12 +127,12 @@ public class MainController
 	private void showResults(List<File> resultList) throws IOException
 	{
 		ShowResultsController showResultsController = new ShowResultsController();
-		File file = new File("src/main/resources/gr/uop/asteras/ShowResults.fxml");
-		FXMLLoader loader = new FXMLLoader(file.toURI().toURL());
+		File                  file                  = new File("src/main/resources/gr/uop/asteras/ShowResults.fxml");
+		FXMLLoader            loader                = new FXMLLoader(file.toURI().toURL());
 		loader.setController(showResultsController);
-		Parent root = loader.load();
-		Scene scene = new Scene(root);
-		Stage stage = new Stage();
+		Parent root  = loader.load();
+		Scene  scene = new Scene(root);
+		Stage  stage = new Stage();
 
 		showResultsController.setResultList(resultList);
 		showResultsController.setResultScores(luceneController.getTopScores());
@@ -166,7 +167,8 @@ public class MainController
 
 		var selectedFile = fileChooser.showOpenMultipleDialog(advancedSettingsBox.getScene().getWindow());
 
-		assert selectedFile != null;
+		if (selectedFile == null)
+			return;
 
 		for (File file : selectedFile)
 		{
@@ -206,10 +208,39 @@ public class MainController
 		}
 	}
 
+	@FXML
+	void deleteBibFile(ActionEvent event)
+	{
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Delete Bib File");
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Bib File", "*.bib"));
+		fileChooser.setInitialDirectory(new File(LuceneController.DATA_DIR));
+		var selectedFile = fileChooser.showOpenMultipleDialog(advancedSettingsBox.getScene().getWindow());
+
+		if (selectedFile == null)
+			return;
+
+		for (int i = 0; i < selectedFile.size(); i++)
+		{
+			Path targetPath = selectedFile.get(i).toPath();
+			try
+			{
+				Files.delete(targetPath);
+				luceneController.deleteIndexDir();
+			}
+			catch (IOException e)
+			{
+				throw new RuntimeException(e);
+			}
+		}
+		luceneController = new LuceneController();
+		luceneController.createIndex();
+	}
+
 	private void setIcon(Stage stage) throws IOException
 	{
-		File iconFile = new File("src/main/resources/gr/uop/asteras/icons/search32.png");
-		Image icon = new Image(iconFile.toURI().toURL().toString());
+		File  iconFile = new File("src/main/resources/gr/uop/asteras/icons/search32.png");
+		Image icon     = new Image(iconFile.toURI().toURL().toString());
 
 		stage.getIcons().add(icon);
 	}

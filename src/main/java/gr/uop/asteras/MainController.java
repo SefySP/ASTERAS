@@ -195,6 +195,29 @@ public class MainController
 		}
 	}
 
+	@FXML
+	void addZipFile(ActionEvent event)
+	{
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Add Zip File");
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Zip File", "*.zip"));
+
+		var selectedFile = fileChooser.showOpenDialog(advancedSettingsBox.getScene().getWindow());
+
+		if (selectedFile == null)
+			return;
+
+		try
+		{
+			luceneController.addFileToIndex(copyFileToDefaultDataDirectory(selectedFile));
+			System.out.println(selectedFile.getName());
+		}
+		catch (FileAlreadyExistsException exception)
+		{
+			System.out.println(selectedFile + " exists");
+		}
+	}
+
 	private File copyFileToDefaultDataDirectory(File file) throws FileAlreadyExistsException
 	{
 		Path sourcePath = Paths.get(file.toURI());

@@ -21,7 +21,7 @@ public class AddingFiles
             ZipEntry entry = entries.nextElement();
             String name = entry.getName();
             System.out.println(name);
-            if (name.toUpperCase().endsWith(".BIB")) {
+            if (name.toUpperCase().endsWith(".BIB")){
                 File dir = createDirectory("src/main/resources/gr/uop/asteras/temp/");
                 File fnfile = new File(dir, "fn.bib");//Αρχείο
 

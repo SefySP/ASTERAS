@@ -14,7 +14,7 @@ import java.net.URL;
 public class ASTERAS extends Application
 {
     private final double MIN_HEIGHT = 400.0;
-    private final double MIN_WIDTH  = 400.0;
+    private final double MIN_WIDTH  = 600.0;
 
     URL url = this.getClass().getResource("styles/dark-theme-try.css");
 
@@ -56,6 +56,9 @@ public class ASTERAS extends Application
         primary.setTitle("ASTERAS");
         primary.setScene(scene);
         setIcon();
+
+        primary.setHeight(600);
+        primary.setWidth(1000);
 
         primary.show();
 

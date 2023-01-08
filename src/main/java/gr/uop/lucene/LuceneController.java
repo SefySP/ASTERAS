@@ -50,6 +50,7 @@ public class LuceneController
             Files.delete(targetPath);
         }
     }
+    
 
     public void addFileToIndex(File file)
     {

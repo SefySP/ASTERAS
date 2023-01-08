@@ -65,6 +65,9 @@
          <content>
             <HBox fx:id="advancedSettingsBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0" style="-fx-background-color: grey;">
                <children>
+                  <Label text="Max Results" />
+               </children>
+               <children>
                   <Spinner fx:id="maxSearchResults" prefHeight="25.0" prefWidth="80.0" />
                </children></HBox>
          </content>

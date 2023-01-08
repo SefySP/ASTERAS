@@ -6,30 +6,36 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class AddingFiles
+public class FilesFromZip
 {
 
     private ZipFile zipFile;
     private Enumeration<? extends ZipEntry> entries;
 
-    public AddingFiles(String PathToFile) throws IOException
+    public FilesFromZip(String PathToFile) throws IOException
     {
         System.out.println("Hello World here1");
         this.zipFile = new ZipFile(PathToFile);
-        this.entries = zipFile.entries();
+        this.entries = this.zipFile.entries();
     }
 
-    public File getnextfile() throws IOException{
+    public File getnextfile() throws IOException, InterruptedException{
+
+        System.out.println(entries);
         if(entries.hasMoreElements()){
             ZipEntry entry = entries.nextElement();
             String name = entry.getName();
+            name = name.substring(name.lastIndexOf('/') + 1, name.length( ));
             System.out.println(name);
             if (name.toUpperCase().endsWith(".BIB")){
+                System.out.println("\nHi there\n");
                 File dir = createDirectory("src/main/resources/gr/uop/asteras/temp/");
-                File fnfile = new File(dir, "fn.bib");//Αρχείο
+                File fnfile = new File(dir, name);//Αρχείο
+                fnfile.createNewFile();
 
                 OutputStream out = new FileOutputStream(fnfile);
                 InputStream in = zipFile.getInputStream(entry); //Ινπουτ
@@ -37,9 +43,9 @@ public class AddingFiles
                 
                 return fnfile;
             }
-        }
-        else{
-            return null;
+            else{
+                return this.getnextfile();//Επειδή αυτό δεν είναι Bib αρχείο, προχωράμε στο επόμενο
+            }
         }
         return null;
     }

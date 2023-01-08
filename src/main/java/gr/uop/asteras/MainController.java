@@ -4,6 +4,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,6 +36,7 @@ import javafx.stage.Stage;
 
 public class MainController
 {
+	URL url = this.getClass().getResource("styles/dark-theme-try.css");
 
 	protected static final String[]         searchableFields = new String[]{BibFileFields.AUTHOR, BibFileFields.EDITOR,
 																			BibFileFields.BOOKTITLE,
@@ -117,11 +119,13 @@ public class MainController
 		for (int i = 1; i < children.size(); i++)
 		{
 			Node     check    = children.get(i);
-			CheckBox checkBox = (CheckBox) check;
-			if (checkBox.isSelected())
-			{
-				System.out.println(checkBox.getText());
-				searchFields.add(checkBox.getText());
+			if (check instanceof CheckBox){
+				CheckBox checkBox = (CheckBox) check;
+				if (checkBox.isSelected())
+				{
+					System.out.println(checkBox.getText());
+					searchFields.add(checkBox.getText());
+				}
 			}
 		}
 	}
@@ -155,6 +159,14 @@ public class MainController
 		stage.setMinWidth(400.0);
 
 		setIcon(stage);
+
+		if (url != null) {
+            scene.getStylesheets().add(url.toExternalForm());
+        }
+        else{
+            System.out.println("Resource not found. Aborting.");
+        }
+
 		stage.setScene(scene);
 
 		stage.showAndWait();
@@ -196,7 +208,7 @@ public class MainController
 	}
 
 	@FXML
-	void addZipFile(ActionEvent event) throws IOException
+	void addZipFile(ActionEvent event) throws IOException, InterruptedException
 	{
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Add Zip File");
@@ -207,22 +219,26 @@ public class MainController
 		if (selectedFile == null)
 			return;
 
-		try
+		
+		File fnfile;
+		FilesFromZip addingFiles = new FilesFromZip(selectedFile.getAbsolutePath());
+		fnfile = addingFiles.getnextfile();
+		System.out.println("File name : " + fnfile.getName());
+		int fn= 0;
+		while(fnfile != null)
 		{
-			File fnfile;
-			AddingFiles addingFiles = new AddingFiles(selectedFile.getAbsolutePath());
-			fnfile = addingFiles.getnextfile();
-			while(fnfile != null)
-			{
+			System.out.println("In the loop : " + fn);
+			try{
 				luceneController.addFileToIndex(copyFileToDefaultDataDirectory(fnfile));
-				fnfile = addingFiles.getnextfile();
 			}
-			
+			catch (FileAlreadyExistsException exception)
+			{
+				System.out.println(selectedFile + " exists");
+			}
+			fnfile = addingFiles.getnextfile();
+			fn++;
 		}
-		catch (FileAlreadyExistsException exception)
-		{
-			System.out.println(selectedFile + " exists");
-		}
+		
 	}
 
 	private File copyFileToDefaultDataDirectory(File file) throws FileAlreadyExistsException

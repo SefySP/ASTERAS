@@ -6,6 +6,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -69,9 +70,12 @@
       </VBox>
    </center>
    <bottom>
-      <TitledPane expanded="false" style="-fx-background-color: grey;" text="Advanced Settings" BorderPane.alignment="CENTER">
+      <TitledPane style="-fx-background-color: grey;" text="Advanced Settings" BorderPane.alignment="CENTER">
          <content>
-            <HBox fx:id="advancedSettingsBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0" style="-fx-background-color: grey;" />
+            <HBox fx:id="advancedSettingsBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0" style="-fx-background-color: grey;">
+               <children>
+                  <Spinner fx:id="maxSearchResults" prefHeight="25.0" prefWidth="80.0" />
+               </children></HBox>
          </content>
       </TitledPane>
    </bottom>

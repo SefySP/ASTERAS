@@ -14,6 +14,7 @@ import java.util.List;
 
 import gr.uop.BibFileFields;
 import gr.uop.lucene.LuceneController;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +22,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -45,6 +48,9 @@ public class MainController
 	@FXML
 	private HBox advancedSettingsBox;
 
+	@FXML
+	private Spinner<Integer> maxSearchResults;
+
 	public MainController()
 	{
 		luceneController = new LuceneController();
@@ -67,6 +73,8 @@ public class MainController
 
 			advancedSettingsBox.getChildren().add(checkBox);
 		}
+
+		maxSearchResults.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 50, 10));
 	}
 
 	@FXML
@@ -92,7 +100,7 @@ public class MainController
 
 		try
 		{
-			var list = luceneController.search(searchQuery, searchFields.toArray(new String[0]));
+			var list = luceneController.search(searchQuery, searchFields.toArray(new String[0]), maxSearchResults.getValue());
 			System.out.println(list);
 			System.out.println(luceneController.getTime());
 			showResults(list, searchQuery);
@@ -105,8 +113,10 @@ public class MainController
 
 	private void addCheckFields(List<String> searchFields)
 	{
-		for (Node check : advancedSettingsBox.getChildren())
+		ObservableList<Node> children = advancedSettingsBox.getChildren();
+		for (int i = 1; i < children.size(); i++)
 		{
+			Node     check    = children.get(i);
 			CheckBox checkBox = (CheckBox) check;
 			if (checkBox.isSelected())
 			{

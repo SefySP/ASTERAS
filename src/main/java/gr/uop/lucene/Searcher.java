@@ -21,7 +21,6 @@ import java.nio.file.Paths;
 
 public class Searcher
 {
-    private static final int MAX_SEARCH = 10;
     private final IndexSearcher indexSearcher;
     private final Directory indexDirectory;
     private final IndexReader indexReader;
@@ -36,12 +35,12 @@ public class Searcher
         queryParser = new MultiFieldQueryParser(fields, new EnglishAnalyzer(EnglishAnalyzer.ENGLISH_STOP_WORDS_SET));
     }
 
-    public TopDocs search(String searchQuery) throws IOException, ParseException
+    public TopDocs search(String searchQuery, int searchResults) throws IOException, ParseException
     {
         Query query = queryParser.parse(searchQuery);
         query.createWeight(indexSearcher, ScoreMode.COMPLETE, 0.5f);
-        System.out.println("query: " + query.toString());
-        return indexSearcher.search(query, MAX_SEARCH);
+        System.out.println("query: " + query);
+        return indexSearcher.search(query, searchResults);
     }
 
     public Document getDocument(ScoreDoc scoreDoc) throws IOException

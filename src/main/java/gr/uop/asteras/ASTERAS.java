@@ -9,11 +9,14 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 public class ASTERAS extends Application
 {
     private final double MIN_HEIGHT = 400.0;
     private final double MIN_WIDTH  = 400.0;
+
+    URL url = this.getClass().getResource("styles/dark-theme-try.css");
 
     private Stage primary;
 
@@ -24,6 +27,13 @@ public class ASTERAS extends Application
         Parent root = fxmlLoader.load();
 
         Scene scene = new Scene(root);
+        if (url != null) {
+            scene.getStylesheets().add(url.toExternalForm());
+        }
+        else{
+            System.out.println("Resource not found. Aborting.");
+        }
+        
         primary = stage;
         initializeStage(scene);
     }

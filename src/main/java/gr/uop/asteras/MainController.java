@@ -196,7 +196,7 @@ public class MainController
 	}
 
 	@FXML
-	void addZipFile(ActionEvent event)
+	void addZipFile(ActionEvent event) throws IOException
 	{
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Add Zip File");
@@ -209,8 +209,15 @@ public class MainController
 
 		try
 		{
-			luceneController.addFileToIndex(copyFileToDefaultDataDirectory(selectedFile));
-			System.out.println(selectedFile.getName());
+			File fnfile;
+			AddingFiles addingFiles = new AddingFiles(selectedFile.getAbsolutePath());
+			fnfile = addingFiles.getnextfile();
+			while(fnfile != null)
+			{
+				luceneController.addFileToIndex(copyFileToDefaultDataDirectory(fnfile));
+				fnfile = addingFiles.getnextfile();
+			}
+			
 		}
 		catch (FileAlreadyExistsException exception)
 		{

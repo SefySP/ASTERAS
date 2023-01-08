@@ -11,13 +11,19 @@ import java.util.zip.ZipFile;
 
 public class AddingFiles
 {
-    public void addZip(String PathToFile) throws IOException{
+
+    private ZipFile zipFile;
+    private Enumeration<? extends ZipEntry> entries;
+
+    public AddingFiles(String PathToFile) throws IOException
+    {
         System.out.println("Hello World here1");
-        ZipFile zipFile = new ZipFile(PathToFile);
+        this.zipFile = new ZipFile(PathToFile);
+        this.entries = zipFile.entries();
+    }
 
-        Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-        while(entries.hasMoreElements()){
+    public File getnextfile() throws IOException{
+        if(entries.hasMoreElements()){
             ZipEntry entry = entries.nextElement();
             String name = entry.getName();
             System.out.println(name);
@@ -28,14 +34,41 @@ public class AddingFiles
                 OutputStream out = new FileOutputStream(fnfile);
                 InputStream in = zipFile.getInputStream(entry); //Ινπουτ
                 out.write(in.readAllBytes());
-
-                System.out.println("\n\n");
-                System.out.println(AddingBib.getBibFieldData("title", fnfile)); // Εδώ Lucene
-                System.out.println("\n\n");
+                
+                return fnfile;
             }
-            
         }
+        else{
+            return null;
+        }
+        return null;
     }
+
+    // public void addZip(String PathToFile) throws IOException{
+    //     System.out.println("Hello World here1");
+    //     ZipFile zipFile = new ZipFile(PathToFile);
+
+    //     Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+    //     while(entries.hasMoreElements()){
+    //         ZipEntry entry = entries.nextElement();
+    //         String name = entry.getName();
+    //         System.out.println(name);
+    //         if (name.toUpperCase().endsWith(".BIB")){
+    //             File dir = createDirectory("src/main/resources/gr/uop/asteras/temp/");
+    //             File fnfile = new File(dir, "fn.bib");//Αρχείο
+
+    //             OutputStream out = new FileOutputStream(fnfile);
+    //             InputStream in = zipFile.getInputStream(entry); //Ινπουτ
+    //             out.write(in.readAllBytes());
+
+    //             System.out.println("\n\n");
+    //             System.out.println(AddingBib.getBibFieldData("title", fnfile)); // Εδώ Lucene
+    //             System.out.println("\n\n");
+    //         }
+            
+    //     }
+    // }
 
     public static File createDirectory(String directoryPath) throws IOException {
         File dir = new File(directoryPath);

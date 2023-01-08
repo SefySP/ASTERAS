@@ -92,10 +92,10 @@ public class MainController
 
 		try
 		{
-			var list = luceneController.search(searchTextField.getText().trim(), searchFields.toArray(new String[0]));
+			var list = luceneController.search(searchQuery, searchFields.toArray(new String[0]));
 			System.out.println(list);
 			System.out.println(luceneController.getTime());
-			showResults(list);
+			showResults(list, searchQuery);
 		}
 		catch (IOException | ParseException e)
 		{
@@ -124,7 +124,7 @@ public class MainController
 		}
 	}
 
-	private void showResults(List<File> resultList) throws IOException
+	private void showResults(List<File> resultList, String searchQuery) throws IOException
 	{
 		ShowResultsController showResultsController = new ShowResultsController();
 		File                  file                  = new File("src/main/resources/gr/uop/asteras/ShowResults.fxml");
@@ -136,7 +136,8 @@ public class MainController
 
 		showResultsController.setResultList(resultList);
 		showResultsController.setResultScores(luceneController.getTopScores());
-		showResultsController.setListViewResult();
+		showResultsController.setListViewResult(searchQuery);
+
 		stage.setTitle("Results");
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.initOwner(root.getScene().getWindow());

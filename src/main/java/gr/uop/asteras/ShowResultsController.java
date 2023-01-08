@@ -24,16 +24,33 @@ public class ShowResultsController implements Initializable
 		this.resultList = resultList;
 	}
 
-	public void setListViewResult()
+	public void setListViewResult(String searchQuery)
 	{
 		listViewResult.getItems().clear();
 		int i = 0;
 		for (File file: resultList)
 		{
 			String researcher = file.getName().split("\\.")[0].toUpperCase();
+			String field;
+			String info = "";
+			for (int j = 0; j < MainController.searchableFields.length; j++)
+			{
+				field = AddingBib.getBibFieldData(MainController.searchableFields[j], file);
+				var elements = field.split("\n");
+				for (String element : elements)
+				{
+					if (element.toLowerCase().contains(searchQuery.toLowerCase()))
+					{
+						System.out.println(element);
+						info = element;
+						break;
+					}
+				}
+			}
 			Label link = new Label(researcher + " | " + resultScores.get(i));
+			Label infoLabel = new Label(info);
 			i++;
-			listViewResult.getItems().add(link);
+			listViewResult.getItems().addAll(link, infoLabel);
 		}
 	}
 
